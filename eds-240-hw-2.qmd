@@ -60,13 +60,68 @@ colSums(is.na(fema))
 
 fema <- fema %>% filter(!`State Name` %in% c("District of Columbia","American Samoa", "Guam"   ,"Northern Mariana Islands", "Puerto Rico", "Virgin Islands" ))
 
-
-
+glimpse(fema)
 unique(fema$`State Name`) 
 
+fema_clean <- fema %>% select(state = "State Name Abbreviation", county = "County Name", nri = "National Risk Index - Score - Composite")
+fema_clean
+```
+
+```{r, fig.asp= 1.5}
+## I will use a violin plot with jittered points to illustrate the distribution of counties in separate states
+
+# fema_clean %>%
+#   # mutate(state_class =
+#   #                       case_when(
+#   #                        state == "CA" ~ "California",
+#   #                        state != "CA" ~ "Other States"
+#   #                         )) %>%
+#   ggplot(aes(x = state, y = nri)) + geom_violin() + geom_jitter()
+# 
+
+## ranked dot plot
+fema_clean %>%
+  # mutate(state_class =
+  #                       case_when(
+  #                        state == "CA" ~ "California",
+  #                        state != "CA" ~ "Other States"
+  #                         )) %>%
+  group_by(state) %>%
+  summarize(mean_nri = mean(nri, na.rm = TRUE)) %>% 
+  mutate(state = reorder(state, mean_nri)) %>%
+  ggplot(aes(x = mean_nri, y = state)) +
+  geom_point(aes(color = state == "CA"), size = 3) +
+  scale_color_manual(
+    name = "", 
+    values = c("TRUE" = "#CA0020", # only label california
+               "FALSE" = "grey60"),
+    labels = c("Other States", "California")
+  ) +
+  labs(
+    title = "Average County National Risk Index (Composite Score) by State",
+    x = "Average County National Risk Index (Composite Score)",
+    y = "State"
+  ) +
+  theme_minimal()
 
 
 
+# ridgeline
+fema_clean %>% 
+  ggplot(aes(
+    x = nri,
+    y = fct_reorder(state, nri),
+    fill = state
+  )) +
+  geom_density_ridges(alpha = 0.6, color = "white") +
+  guides(fill = "none") +
+  labs(
+    x = "County National Risk Index (Composite Score)",
+    y = "State",
+    title = "Distribution of County Level FEMA National Risk Index Scores",
+    subtitle = "Ridgeline represents county level distribution within a state"
+  ) +
+  theme_minimal()
 
 
 
