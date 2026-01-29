@@ -18,20 +18,21 @@ This repository is organized as follows and contains:
 
 -   `eds-240-hw-2.qmd`: Rendered PDF of `eds-240-hw-2.qmd`.
 
--   
+-   `.gitignore`: File containing shortcut to ignore pushinng large data files.
 
 ```         
 ├── eds240-nri-acs-viz.Rproj
-├── eds-240-hw-2.html
 ├── eds-240-hw-2.pdf
-└── README.md
+├── eds-240-hw-2.qmd
+├── README.md
+└── .gitignore
 ```
 
 ## Data Access
 
 \*The data utilized in this analysis is not housed in this repository.
 
-The is a publicly accessible database that records
+The data used in this project is obtained from FEMA’s [National Risk Index (NRI)](https://www.fema.gov/flood-maps/products-tools/national-risk-index) for natural hazards. The NRI provides open-access information on expected annual loss, social vulnerability, and community resilience for U.S. counties. It includes both hazard specific and composite risk scores, along with qualitative risk ratings ranging from “Very Low” to “Very High.” The dataset is publicly available through FEMA’s [Resilience Analysis and Planning Tool (RAPT)](https://hazards.fema.gov/nri/).
 
 ## Contributors
 
@@ -41,8 +42,4 @@ This repository is maintained by Vedika Shirtekar as part of the Master of Envir
 
 [1] EDS 240. (n.d.). *Data Visualization & Communication*. Bren School of Environmental Science and Management. Accessed January 27, 2026, from <https://eds-240-data-viz.github.io/>
 
-[3] rfordatascience. (n.d.). *tidytuesday/data/2023/2023-06-20/readme.md at main · rfordatascience/tidytuesday*. GitHub. Accessed January 15, 2026, from <https://github.com/rfordatascience/tidytuesday/blob/main/data/2023/2023-06-20/readme.md#data-dictionary>
-
-[2] National Risk Index for Natural Hazards
-
-[4] *NUFORC reports by shape*. (2023, August 20). NUFORC. Collection and Dissemination of Objective UFO Data. Accessed January 15, 2026, from <https://nuforc.org/webreports/ndxshape.html>
+[2] Resilience Analysis and Planning Tool (RAPT). (2025). Federal Emergency Management Agency. Accessed January 27, 2026, from <https://www.fema.gov/emergency-managers/practitioners/resilience-analysis-and-planning-tool>
