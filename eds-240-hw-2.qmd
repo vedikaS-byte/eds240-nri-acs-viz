@@ -1,11 +1,11 @@
 ---
 title: "HW #2: Visualizing FEMA NRI Data"
-output: pdf
+author: "Vedika Shirtekar"
+date: "1/28/2026"
+format: pdf
 ---
 
-# **HW #2: Visualizing FEMA NRI Data**
-
-This homework assignment involves cleaning, wrangling, and visualizing FEMA National Risk Index data for all 50 U.S. states using R and `ggplot2`. The final plot compares California to other states, highlights key trends, and includes key graphic components (ie. a title, subtitle, caption, alt text, and a polished, and accessible theme).
+This homework assignment involves cleaning, wrangling, and visualizing FEMA National Risk Index data for all 50 U.S. states using R and `ggplot2`. The final plot compares California to other states, highlights key trends, and includes key graphic components (ie. a title, subtitle, caption, alt text, and an accessible theme).
 
 ### Load in Data
 
@@ -21,7 +21,8 @@ fema <- read_csv(here("data", "National_Risk_Index_Counties_807384124455672111.c
 
 # Select for the relevant variables and exclude non-US state designations 
 fema_clean <- fema %>% 
-  filter(!`State Name` %in% c("District of Columbia","American Samoa", "Guam", "Northern Mariana Islands", "Puerto Rico", "Virgin Islands" )) %>% 
+  filter(!`State Name` %in% c("District of Columbia","American Samoa", "Guam", 
+                        "Northern Mariana Islands", "Puerto Rico", "Virgin Islands")) %>% 
   select(state_name = "State Name", nri = "National Risk Index - Score - Composite")
 
 # Observe the structure of the cleaned data
@@ -30,7 +31,7 @@ glimpse(fema_clean)
 
 ## Visualization Process
 
-```{r,fig.asp=2}
+```{r,fig.asp= 1.7}
 # Create a ranked bar plot with the averaged composite NRI score per state
 fema_clean %>%
   group_by(state_name) %>%
@@ -54,7 +55,7 @@ fema_clean %>%
   # Label each bar with its corresponding average NRI score
   geom_text( 
     aes( 
-      label = round(mean_nri, 2)), # Round each score to the nearest hundreth
+      label = round(mean_nri, 1)), # Round each score to the nearest tenth
       hjust = -0.1, # Adjust the placement to scale
       size = 2.5 # Set a size for each labels
   ) +  
@@ -69,17 +70,20 @@ fema_clean %>%
     name = "", # Leave the legend title as an empty string
     values = c(
       "California" = "darkred", # Assign "California" a dark red color
-      "Other States" = "grey60" # Assign the grouped states besides California a grey color for contrast
+      "Other States" = "grey60" # Assign grey to the grouped states besides California
     )) + 
       
   # Update the labels of the plot    
   labs(
-    title = "Average County National Risk Index (Composite Score) by State", # Add a title
-    subtitle = "Each value represents the mean county-level NRI score for a state, with \nCalifornia highlighted as the baseline for comparison.", # Add a subtitle with a line break
-    x = "Average Composite County National Risk Index (%)", # Add an x-label
+    title = "Average County National Risk Index \n(Composite Score) by State", # Add a title
+    subtitle = "Each value represents the mean county level NRI score for a \nstate, with California highlighted as the baseline for comparison.", # Add a subtitle with a line break
+    x = "Average County-Level National Risk Index Score (%)", # Add an x-label
     y = "State", # Add a y-label
-    caption = "Data Source: 2025 Release of FEMA National Risk Index (NRI). Analysis contains only the 50 US States.", # Add a caption
-    alt = "Horizontal bar chart showing average county National Risk Index (NRI) by state, with California highlighted in dark red and other states in grey, bars ordered from highest to lowest mean NRI, each bar labeled with its numeric mean NRI Score, x-axis showing NRI (%) with breaks every 10%,and  y-axis listing the states.") + 
+    caption = "Data Source: 2025 Release of FEMA National Risk Index (NRI). \nAnalysis only contains the 50 US States.", # Add a caption
+    alt = "Horizontal bar chart showing average county National Risk Index (NRI) by state, 
+    with California highlighted in dark red and other states in grey, 
+    bars ordered from highest to lowest mean NRI, each bar labeled with its numeric mean NRI Score, 
+    x-axis showing NRI (%) with breaks every 10%, and y-axis listing the states.") + 
  
   # Select a theme with no background grid    
   theme_classic() + 
@@ -87,7 +91,7 @@ fema_clean %>%
   # Adjust the legend and caption placement    
   theme(legend.position = "bottom", # Move the legend position to bottom of plot
         plot.caption.position = "plot", # Align the caption with plot
-        plot.caption = element_text(hjust = 0)) # Adjust the position horizontal to the plot
+        plot.caption = element_text(hjust = 0)) # Adjust the position horizontal to plot
 ```
 
 ### **Analysis Questions**

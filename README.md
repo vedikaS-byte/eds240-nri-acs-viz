@@ -16,16 +16,14 @@ This repository is organized as follows and contains:
 
 -   `eds-240-hw-2.qmd`: File containing the code relevant to the analysis of county-level FEMA NRI scores.
 
--   `HW2.html`: Rendered HTML file of interpretation analysis.
+-   `eds-240-hw-2.qmd`: Rendered PDF of `eds-240-hw-2.qmd`.
 
 -   
 
 ```         
 ├── eds240-nri-acs-viz.Rproj
 ├── eds-240-hw-2.html
-├── eds-240-hw-2.log
-├── eds-240-hw-2.qmd
-├── eds-240-hw-2.tex
+├── eds-240-hw-2.pdf
 └── README.md
 ```
 
@@ -41,10 +39,10 @@ This repository is maintained by Vedika Shirtekar as part of the Master of Envir
 
 ## References
 
-[1[ *Alberto Cairo’s version of hierarchy of elementary perceptual tasks*. (n.d.). Data-Viz-Workshop-2021. Accessed January 14, 2026, from <https://badriadhikari.github.io/data-viz-workshop-2021/activity-perceptual-task/Solution.html>
-
-[2] EDS 240. (n.d.). *Data Visualization & Communication*. Bren School of Environmental Science and Management. Accessed January 27, 2026, from <https://eds-240-data-viz.github.io/>
+[1] EDS 240. (n.d.). *Data Visualization & Communication*. Bren School of Environmental Science and Management. Accessed January 27, 2026, from <https://eds-240-data-viz.github.io/>
 
 [3] rfordatascience. (n.d.). *tidytuesday/data/2023/2023-06-20/readme.md at main · rfordatascience/tidytuesday*. GitHub. Accessed January 15, 2026, from <https://github.com/rfordatascience/tidytuesday/blob/main/data/2023/2023-06-20/readme.md#data-dictionary>
+
+[2] National Risk Index for Natural Hazards
 
 [4] *NUFORC reports by shape*. (2023, August 20). NUFORC. Collection and Dissemination of Objective UFO Data. Accessed January 15, 2026, from <https://nuforc.org/webreports/ndxshape.html>
