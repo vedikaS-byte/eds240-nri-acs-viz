@@ -1,6 +1,6 @@
 ---
 title: "HW #2: Visualizing FEMA NRI Data"
-format: html
+output: pdf
 ---
 
 # **HW #2: Visualizing FEMA NRI Data**

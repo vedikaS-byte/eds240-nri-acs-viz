@@ -125,29 +125,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <section id="hw-2-visualizing-fema-nri-data" class="level1">
 <h1><strong>HW #2: Visualizing FEMA NRI Data</strong></h1>
-<section id="learning-outcomes" class="level2">
-<h2 class="anchored" data-anchor-id="learning-outcomes">Learning <strong>Outcomes</strong></h2>
-<ul>
-<li><p>identify which types of visualizations are most appropriate for your data and your audience</p></li>
-<li><p>prepare (e.g.&nbsp;clean, explore, wrangle) data so that it’s appropriately formatted for building data visualizations</p></li>
-<li><p>build effective, responsible, accessible, and aesthetically-pleasing, visualizations using the R programming language, and specifically <code>{ggplot2}</code> + ggplot2 extension packages</p></li>
-</ul>
-</section>
-<section id="description" class="level2">
-<h2 class="anchored" data-anchor-id="description"><strong>Description</strong></h2>
-<p><strong>In class, we’ve been discussing strategies and considerations for choosing the right graphic form to represent your data and convey your intended message. Here, you’ll apply what we’re learning while exploring natural hazards data, courtesy of the <a href="https://hazards.fema.gov/nri/">FEMA Resilience Analysis and Planning Tool (RAPT)</a></strong>.</p>
-<section id="iv.-build-your-visualization" class="level3">
-<h3 class="anchored" data-anchor-id="iv.-build-your-visualization"><strong>IV. Build your visualization</strong></h3>
-<p>Create a data viz that helps to answer the question, How do FEMA National Risk Index scores for counties in California compare to those in other states? This may require some data wrangling.</p>
-<p>Your final visualization should:</p>
-<ul>
-<li><p>include data for the 50 US states only (no territories)</p></li>
-<li><p>include a title (short, descriptive) &amp; subtitle (describes main takeaway) (see <a href="https://clauswilke.com/dataviz/figure-titles-captions.html">Fundamentals of Data Visualization, Ch 22</a> for an example), a caption (describes the data source, e.g.&nbsp;“Data: FEMA National Risk Index (2025 Release)”), and alt text (following the formula you recently practiced in <a href="https://eds-240-data-viz.github.io/course-materials/lab/LAB-SLIDES-alt-text.html#alt-text-formula">lab</a>; use the <code>fig-alt</code> code chunk option to apply your alt text)</p></li>
-<li><p>consider and implement strategies for highlighting trends / important information (e.g.&nbsp;arranging data, highlighting data, adjusting scales)</p></li>
-<li><p>use custom colors (if applicable), rather than ggplot defaults</p></li>
-<li><p>have an updated / polished theme</p></li>
-</ul>
-<p>***You can adjust the aspect ratio of your plot (i.e.&nbsp;its width to height ratio) so that your data / groups are easy to read. Add the <code>fig-asp</code> option to your code chunk YAML, which makes adjusting aspect ratios for rendered outputs quite easy. Values &gt; 1 make your plot taller and values &lt; 1 make your plot wider.</p>
+<p>This homework assignment involves cleaning, wrangling, and visualizing FEMA National Risk Index data for all 50 U.S. states using R and <code>ggplot2</code>. The final plot compares California to other states, highlights key trends, and includes key graphic components (ie. a title, subtitle, caption, alt text, and a polished, and accessible theme).</p>
+<section id="load-in-data" class="level3">
+<h3 class="anchored" data-anchor-id="load-in-data">Load in Data</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in data </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -158,19 +138,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Select for the relevant variables and exclude non-US state designations </span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>fema_clean <span class="ot">&lt;-</span> fema <span class="sc">%&gt;%</span> </span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="st">`</span><span class="at">State Name</span><span class="st">`</span> <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"District of Columbia"</span>,<span class="st">"American Samoa"</span>, <span class="st">"Guam"</span>, <span class="st">"Northern Mariana Islands"</span>, <span class="st">"Puerto Rico"</span>, <span class="st">"Virgin Islands"</span> )) <span class="sc">%&gt;%</span> </span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">state =</span> <span class="st">"State Name Abbreviation"</span>, <span class="at">state_name =</span> <span class="st">"State Name"</span>, <span class="at">county =</span> <span class="st">"County Name"</span>, <span class="at">nri =</span> <span class="st">"National Risk Index - Score - Composite"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">state_name =</span> <span class="st">"State Name"</span>, <span class="at">nri =</span> <span class="st">"National Risk Index - Score - Composite"</span>)</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Observe the structure of the cleaned data</span></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(fema_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 3,143
-Columns: 4
-$ state      &lt;chr&gt; "AL", "AL", "AL", "AL", "AL", "AL", "AL", "AL", "AL", "AL",…
+Columns: 2
 $ state_name &lt;chr&gt; "Alabama", "Alabama", "Alabama", "Alabama", "Alabama", "Ala…
-$ county     &lt;chr&gt; "Autauga", "Baldwin", "Barbour", "Bibb", "Blount", "Bullock…
 $ nri        &lt;dbl&gt; 57.56997, 96.72392, 48.12341, 39.12214, 68.47964, 25.25445,…</code></pre>
 </div>
 </div>
+</section>
+<section id="visualization-process" class="level2">
+<h2 class="anchored" data-anchor-id="visualization-process">Visualization Process</h2>
 <div class="cell" data-fig.asp="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a ranked bar plot with the averaged composite NRI score per state</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fema_clean <span class="sc">%&gt;%</span></span>
@@ -233,38 +214,30 @@ $ nri        &lt;dbl&gt; 57.56997, 96.72392, 48.12341, 39.12214, 68.47964, 25.25
 <p><img src="eds-240-hw-2_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-</section>
-<section id="v.-answer-some-questions" class="level3">
-<h3 class="anchored" data-anchor-id="v.-answer-some-questions"><strong>V. Answer some questions</strong></h3>
+<section id="analysis-questions" class="level3">
+<h3 class="anchored" data-anchor-id="analysis-questions"><strong>Analysis Questions</strong></h3>
+<p><strong>1.</strong> What are your variables of interest and what kinds of data (e.g.&nbsp;numeric, categorical, ordered, etc.) are they (a bullet point list is fine)?</p>
 <ul>
-<li><p><strong>1.</strong> What are your variables of interest and what kinds of data (e.g.&nbsp;numeric, categorical, ordered, etc.) are they (a bullet point list is fine)?</p>
+<li><p><code>State Name</code>: A categorical variable containing the full name of each US state and territory as a string.</p></li>
+<li><p><code>National Risk Index - Score - Composite</code>: A numeric variable containing the composite (single overall score) National Risk Index for each US county.</p></li>
+</ul>
+<p><strong>2.</strong> How did you decide which type of graphic form was best suited for answering the question? What alternative graphic forms could you have used instead? Why did you settle on this particular graphic form?</p>
 <ul>
-<li></li>
-</ul></li>
-<li><p><strong>2.</strong> How did you decide which type of graphic form was best suited for answering the question? What alternative graphic forms could you have used instead? Why did you settle on this particular graphic form?</p>
+<li>Because the National Risk Index (NRI) is a standardized composite index representing the relative county-level risk, averaging county scores with states provides an approximate summary of risk levels for state to state comparison. A horizontal ranked bar chart was chosen for visualization because it clearly outlines the relative standing of each state and enables an easier comparison that highlights California’s score among other states. Alternative graphics include a boxplot which would show the distribution of county-level scores within each state. A ridgeline plot would also be suitable to visualize variation across counties, as well a 2D hex plot. However, I chose a ranked bar plot for simplicity and placing a clearer emphasis on state-level averages to prevent overplotting counties within each state on the same graphic panel.</li>
+</ul>
+<p><strong>3.</strong> Summarize your main finding in no more than two sentences.</p>
 <ul>
-<li>“Because FEMA’s NRI is a standardized composite index representing relative county-level risk, averaging county scores within states provides a reasonable summary of typical risk levels for state-to-state comparison.”</li>
-</ul></li>
-<li><p><strong>3.</strong> Summarize your main finding in no more than two sentences.</p></li>
-<li><p><strong>4.</strong> What modifications did you make to this visualization to make it more easily readable?</p></li>
-<li><p><strong>5.</strong> Is there anything you wanted to implement, but didn’t know how? If so, please describe.</p></li>
+<li>Counties in California rank third highest in average FEMA NRI, with a composite score of 88.72%. Delaware and New Jersey rank slightly higher, but California’s score is still very high likely due to its susceptibility to natural hazards such as earthquakes and wildfires.</li>
+</ul>
+<p><strong>4.</strong> What modifications did you make to this visualization to make it more easily readable?</p>
+<ul>
+<li>Several modifications were made to improve readability. The average county level NRI score was calculated for each state, and bars were colored to highlight California in dark red while all other states are gray, making it easier to distinguish the state of interest. States were ordered from highest to lowest average NRI to emphasize ranking, and numeric values were added to each bar for identifying the specific NRI score in each state for precise comparison.</li>
+</ul>
+<p><strong>5.</strong> Is there anything you wanted to implement, but didn’t know how? If so, please describe.</p>
+<ul>
+<li>An aspect of the visualization analysis I wanted to explore but wasn’t sure how to implement was a visualization showing the percentage makeup of how susceptible each county is to natural disasters relative to other counties within the same state, as well as comparing that distribution across different states. For example, it would have been interesting to see how counties in Texas and California differ in their risk composition, highlighting which counties contribute most to the state’s overall vulnerability.</li>
 </ul>
 </section>
-</section>
-<section id="rubric-specifications" class="level2">
-<h2 class="anchored" data-anchor-id="rubric-specifications"><strong>Rubric (specifications)</strong></h2>
-<p>To receive a “Satisfactory” on HW #2:</p>
-<ul>
-<li><p><strong>Create one visualization</strong> that answers the question, <em>“How do FEMA National Risk Index scores for counties in California compare to those in other states?”</em> and fulfills the requirements listed in Part IV.</p></li>
-<li><p><strong>All code should follow appropriate styling conventions and include clear, informative annotations.</strong> We will not enforce any particular code style guide (you may use conventions from prior courses if you prefer; we recommend following <a href="https://eds-240-data-viz.github.io/clean-code-guide.html">these conventions</a> from the <a href="https://style.tidyverse.org/index.html">Tidyverse style guide</a> if you’re unsure where to start). You don’t need to explain every line, but your annotations should make it easy to follow your thinking and understand important decisions in your code.</p></li>
-<li><p><strong>Answer all five Part V questions.</strong> There are no strict length requirements for free-response questions, however we expect that you answer them thoughtfully and fully.</p></li>
-<li><p><strong>Ensure that everything described above is included in your neatly-organized and polished <code>HW2.qmd</code> file</strong> – this includes appropriate document YAML (at a minimum, title, author, date), clearly labeled sections, appropriately-formatted prose, appropriate code chunk options (e.g.&nbsp;code should render and execute, but warnings and messages should be suppressed, long data frames should not be printed out, etc.)</p></li>
-<li><p><strong>All your work is housed in an organized and polished <code>eds240-nri-acs-viz</code> GitHub repository.</strong> Your README includes all required information, as described in the <a href="https://ucsb-meds.github.io/README-guidelines/">MEDS README Guidelines</a>. Your data folder should is added to your <code>.gitignore</code>.</p></li>
-<li><p><strong>Render <code>HW2.qmd</code> as a PDF.</strong> Double check that all of your outputs, code, and prose are visible.</p></li>
-<li><p><strong>Upload your PDF to Gradescope</strong> by 11:59pm on Wed 01/28/2026.</p></li>
-<li><p><strong>Add your GitHub repo URL to this <a href="https://docs.google.com/spreadsheets/d/1fERw6kvSyAf30rY9ZHtFRIu01wM3qGa8cBQU-AGzh-g/edit?usp=sharing">Google Sheet</a></strong> by 11:59pm on Wed 01/28/2026 (so that we can find your README)</p></li>
-<li><p><strong>Submit a <a href="https://forms.gle/uCw7U5jzJAKahjA4A">Generative AI Statement of Use</a></strong> for HW #2 by 11:59pm on Wed 01/28/2026.</p></li>
-</ul>
 </section>
 </section>
 

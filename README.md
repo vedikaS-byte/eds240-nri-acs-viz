@@ -4,23 +4,28 @@
 
 ## Description
 
-The repository contains the code used to
+This repository contains the code used to explore and visualize [FEMA’s National Risk Index (NRI)](https://hazards.fema.gov/nri/) data for U.S. counties. The analysis focuses on analyzing how counties differ in their susceptibility to natural hazards by comparing risk levels both within and across states. The workflow includes data cleaning and wrangling to ensure suitability for visualization, as well as utilizing R and `ggplot2` to create an effective and accessible visualization.
 
-## Contents
+The graph produced in this analysis is designed to quantify and highlight patterns in natural disaster risk, such as comparing California counties to those in other states based on an assigned composite (overall) score at the county-level. This visualization aims to support insights into community vulnerability and resilience, as well as clearly convey data driven messages about natural hazard risk in California compared to other states.
+
+Contents
 
 This repository is organized as follows and contains:
 
 -   `README.md`: Markdown file detailing repository description, content, structure, data access, and references.
 
--   `HW2.qmd`: File containing the
+-   `eds-240-hw-2.qmd`: File containing the code relevant to the analysis of county-level FEMA NRI scores.
 
 -   `HW2.html`: Rendered HTML file of interpretation analysis.
 
--   `fonts`: Contains the primary Google Fonts utilized in the analysis.
+-   
 
 ```         
 ├── eds240-nri-acs-viz.Rproj
+├── eds-240-hw-2.html
+├── eds-240-hw-2.log
 ├── eds-240-hw-2.qmd
+├── eds-240-hw-2.tex
 └── README.md
 ```
 
