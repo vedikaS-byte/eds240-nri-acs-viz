@@ -18,7 +18,7 @@ This repository is organized as follows and contains:
 
 -   `eds-240-hw-2.qmd`: Rendered PDF of `eds-240-hw-2.qmd`.
 
--   `.gitignore`: File containing shortcut to ignore pushinng large data files.
+-   `.gitignore`: File containing shortcut to ignore pushing large data files.
 
 ```         
 ├── eds240-nri-acs-viz.Rproj
