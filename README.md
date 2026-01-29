@@ -8,7 +8,7 @@ This repository contains the code used to explore and visualize [FEMA’s Nation
 
 The graph produced in this analysis is designed to quantify and highlight patterns in natural disaster risk, such as comparing California counties to those in other states based on an assigned composite (overall) score at the county-level. This visualization aims to support insights into community vulnerability and resilience, as well as clearly convey data driven messages about natural hazard risk in California compared to other states.
 
-Contents
+## Contents
 
 This repository is organized as follows and contains:
 
