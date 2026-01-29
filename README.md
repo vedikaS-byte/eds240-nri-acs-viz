@@ -1,10 +1,10 @@
 # Homework #2 (Visualizing FEMA NRI Data)
 
-\*The full assignment description is avaiable on the [course website](https://eds-240-data-viz.github.io/course-materials/assignments/HW2.html).
+\*The full assignment description is available on the [course website](https://eds-240-data-viz.github.io/course-materials/assignments/HW2.html).
 
 ## Description
 
-The repository contains the code and figures used to
+The repository contains the code used to
 
 ## Contents
 
@@ -38,7 +38,7 @@ This repository is maintained by Vedika Shirtekar as part of the Master of Envir
 
 [1[ *Alberto Cairo’s version of hierarchy of elementary perceptual tasks*. (n.d.). Data-Viz-Workshop-2021. Accessed January 14, 2026, from <https://badriadhikari.github.io/data-viz-workshop-2021/activity-perceptual-task/Solution.html>
 
-[2] EDS 240. (n.d.). *Data Visualization & Communication*. Bren School of Environmental Science and Management. Accessed January 14, 2026, from <https://eds-240-data-viz.github.io/>
+[2] EDS 240. (n.d.). *Data Visualization & Communication*. Bren School of Environmental Science and Management. Accessed January 27, 2026, from <https://eds-240-data-viz.github.io/>
 
 [3] rfordatascience. (n.d.). *tidytuesday/data/2023/2023-06-20/readme.md at main · rfordatascience/tidytuesday*. GitHub. Accessed January 15, 2026, from <https://github.com/rfordatascience/tidytuesday/blob/main/data/2023/2023-06-20/readme.md#data-dictionary>
 

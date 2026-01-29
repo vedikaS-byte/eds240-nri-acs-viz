@@ -5,71 +5,32 @@ format: html
 
 # **HW #2: Visualizing FEMA NRI Data**
 
-## Learning **Outcomes**
+This homework assignment involves cleaning, wrangling, and visualizing FEMA National Risk Index data for all 50 U.S. states using R and `ggplot2`. The final plot compares California to other states, highlights key trends, and includes key graphic components (ie. a title, subtitle, caption, alt text, and a polished, and accessible theme).
 
--   identify which types of visualizations are most appropriate for your data and your audience
-
--   prepare (e.g. clean, explore, wrangle) data so that it’s appropriately formatted for building data visualizations
-
--   build effective, responsible, accessible, and aesthetically-pleasing, visualizations using the R programming language, and specifically `{ggplot2}` + ggplot2 extension packages
-
-## **Description**
-
-**In class, we’ve been discussing strategies and considerations for choosing the right graphic form to represent your data and convey your intended message. Here, you’ll apply what we’re learning while exploring natural hazards data, courtesy of the [FEMA Resilience Analysis and Planning Tool (RAPT)](https://hazards.fema.gov/nri/)**.
-
-### **IV. Build your visualization**
-
-Create a data viz that helps to answer the question, How do FEMA National Risk Index scores for counties in California compare to those in other states? This may require some data wrangling.
-
-Your final visualization should:
-
--   include data for the 50 US states only (no territories)
-
--   include a title (short, descriptive) & subtitle (describes main takeaway) (see [Fundamentals of Data Visualization, Ch 22](https://clauswilke.com/dataviz/figure-titles-captions.html) for an example), a caption (describes the data source, e.g. “Data: FEMA National Risk Index (2025 Release)”), and alt text (following the formula you recently practiced in [lab](https://eds-240-data-viz.github.io/course-materials/lab/LAB-SLIDES-alt-text.html#alt-text-formula); use the `fig-alt` code chunk option to apply your alt text)
-
--   consider and implement strategies for highlighting trends / important information (e.g. arranging data, highlighting data, adjusting scales)
-
--   use custom colors (if applicable), rather than ggplot defaults
-
--   have an updated / polished theme
-
-\*\*\*You can adjust the aspect ratio of your plot (i.e. its width to height ratio) so that your data / groups are easy to read. Add the `fig-asp` option to your code chunk YAML, which makes adjusting aspect ratios for rendered outputs quite easy. Values \> 1 make your plot taller and values \< 1 make your plot wider.
+### Load in Data
 
 ```{r}
-# Create a data viz that helps to answer the question, How do FEMA National Risk Index scores for counties in California compare to those in other states? This may require some data wrangling.
-# 
-# Your final visualization should:
-# 
-# include data for the 50 US states only (no territories)
-# 
-# include a title (short, descriptive) & subtitle (describes main takeaway) (see Fundamentals of Data Visualization, Ch 22 for an example), a caption (describes the data source, e.g. “Data: FEMA National Risk Index (2025 Release)”), and alt text (following the formula you recently practiced in lab; use the fig-alt code chunk option to apply your alt text)
-# 
-# consider and implement strategies for highlighting trends / important information (e.g. arranging data, highlighting data, adjusting scales)
-# 
-# use custom colors (if applicable), rather than ggplot defaults
-# 
-# have an updated / polished theme
+#| warning: false
+#| message: false 
 
 # Read in data 
 library(tidyverse)
 library(here)
 
 fema <- read_csv(here("data", "National_Risk_Index_Counties_807384124455672111.csv"))
-glimpse(fema)
-colSums(is.na(fema))
 
-fema <- fema %>% filter(!`State Name` %in% c("District of Columbia","American Samoa", "Guam", "Northern Mariana Islands", "Puerto Rico", "Virgin Islands" ))
+# Select for the relevant variables and exclude non-US state designations 
+fema_clean <- fema %>% 
+  filter(!`State Name` %in% c("District of Columbia","American Samoa", "Guam", "Northern Mariana Islands", "Puerto Rico", "Virgin Islands" )) %>% 
+  select(state_name = "State Name", nri = "National Risk Index - Score - Composite")
 
-glimpse(fema)
-unique(fema$`State Name`) 
-
-fema_clean <- fema %>% select(state = "State Name Abbreviation", state_name = "State Name", county = "County Name", nri = "National Risk Index - Score - Composite")
-fema_clean
+# Observe the structure of the cleaned data
+glimpse(fema_clean)
 ```
 
-```{r, fig.asp= 1.6}
-# include a title (short, descriptive) & subtitle (describes main takeaway) (see Fundamentals of Data Visualization, Ch 22 for an example), a caption (describes the data source, e.g. “Data: FEMA National Risk Index (2025 Release)”), and alt text (following the formula you recently practiced in lab; use the fig-alt code chunk option to apply your alt text)
+## Visualization Process
 
+```{r,fig.asp=2}
 # Create a ranked bar plot with the averaged composite NRI score per state
 fema_clean %>%
   group_by(state_name) %>%
@@ -117,7 +78,8 @@ fema_clean %>%
     subtitle = "Each value represents the mean county-level NRI score for a state, with \nCalifornia highlighted as the baseline for comparison.", # Add a subtitle with a line break
     x = "Average Composite County National Risk Index (%)", # Add an x-label
     y = "State", # Add a y-label
-    caption = "Data Source: 2025 Release of FEMA National Risk Index (NRI). Analysis contains only the 50 US States.") + # Add a caption
+    caption = "Data Source: 2025 Release of FEMA National Risk Index (NRI). Analysis contains only the 50 US States.", # Add a caption
+    alt = "Horizontal bar chart showing average county National Risk Index (NRI) by state, with California highlighted in dark red and other states in grey, bars ordered from highest to lowest mean NRI, each bar labeled with its numeric mean NRI Score, x-axis showing NRI (%) with breaks every 10%,and  y-axis listing the states.") + 
  
   # Select a theme with no background grid    
   theme_classic() + 
@@ -128,40 +90,26 @@ fema_clean %>%
         plot.caption = element_text(hjust = 0)) # Adjust the position horizontal to the plot
 ```
 
-### **V. Answer some questions**
+### **Analysis Questions**
 
--   **1.** What are your variables of interest and what kinds of data (e.g. numeric, categorical, ordered, etc.) are they (a bullet point list is fine)?
+**1.** What are your variables of interest and what kinds of data (e.g. numeric, categorical, ordered, etc.) are they (a bullet point list is fine)?
 
-    -   
+-   `State Name`: A categorical variable containing the full name of each US state and territory as a string.
 
--   **2.** How did you decide which type of graphic form was best suited for answering the question? What alternative graphic forms could you have used instead? Why did you settle on this particular graphic form?
+-   `National Risk Index - Score - Composite`: A numeric variable containing the composite (single overall score) National Risk Index for each US county.
 
-    -   "Because FEMA’s NRI is a standardized composite index representing relative county-level risk, averaging county scores within states provides a reasonable summary of typical risk levels for state-to-state comparison."
+**2.** How did you decide which type of graphic form was best suited for answering the question? What alternative graphic forms could you have used instead? Why did you settle on this particular graphic form?
 
--   **3.** Summarize your main finding in no more than two sentences.
+-   Because the National Risk Index (NRI) is a standardized composite index representing the relative county-level risk, averaging county scores with states provides an approximate summary of risk levels for state to state comparison. A horizontal ranked bar chart was chosen for visualization because it clearly outlines the relative standing of each state and enables an easier comparison that highlights California's score among other states. Alternative graphics include a boxplot which would show the distribution of county-level scores within each state. A ridgeline plot would also be suitable to visualize variation across counties, as well a 2D hex plot. However, I chose a ranked bar plot for simplicity and placing a clearer emphasis on state-level averages to prevent overplotting counties within each state on the same graphic panel.
 
--   **4.** What modifications did you make to this visualization to make it more easily readable?
+**3.** Summarize your main finding in no more than two sentences.
 
--   **5.** Is there anything you wanted to implement, but didn’t know how? If so, please describe.
+-   Counties in California rank third highest in average FEMA NRI, with a composite score of 88.72%. Delaware and New Jersey rank slightly higher, but California’s score is still very high likely due to its susceptibility to natural hazards such as earthquakes and wildfires.
 
-## **Rubric (specifications)**
+**4.** What modifications did you make to this visualization to make it more easily readable?
 
-To receive a “Satisfactory” on HW #2:
+-   Several modifications were made to improve readability. The average county level NRI score was calculated for each state, and bars were colored to highlight California in dark red while all other states are gray, making it easier to distinguish the state of interest. States were ordered from highest to lowest average NRI to emphasize ranking, and numeric values were added to each bar for identifying the specific NRI score in each state for precise comparison.
 
--   **Create one visualization** that answers the question, *“How do FEMA National Risk Index scores for counties in California compare to those in other states?”* and fulfills the requirements listed in Part IV.
+**5.** Is there anything you wanted to implement, but didn’t know how? If so, please describe.
 
--   **All code should follow appropriate styling conventions and include clear, informative annotations.** We will not enforce any particular code style guide (you may use conventions from prior courses if you prefer; we recommend following [these conventions](https://eds-240-data-viz.github.io/clean-code-guide.html) from the [Tidyverse style guide](https://style.tidyverse.org/index.html) if you’re unsure where to start). You don’t need to explain every line, but your annotations should make it easy to follow your thinking and understand important decisions in your code.
-
--   **Answer all five Part V questions.** There are no strict length requirements for free-response questions, however we expect that you answer them thoughtfully and fully.
-
--   **Ensure that everything described above is included in your neatly-organized and polished `HW2.qmd` file** – this includes appropriate document YAML (at a minimum, title, author, date), clearly labeled sections, appropriately-formatted prose, appropriate code chunk options (e.g. code should render and execute, but warnings and messages should be suppressed, long data frames should not be printed out, etc.)
-
--   **All your work is housed in an organized and polished `eds240-nri-acs-viz` GitHub repository.** Your README includes all required information, as described in the [MEDS README Guidelines](https://ucsb-meds.github.io/README-guidelines/). Your data folder should is added to your `.gitignore`.
-
--   **Render `HW2.qmd` as a PDF.** Double check that all of your outputs, code, and prose are visible.
-
--   **Upload your PDF to Gradescope** by 11:59pm on Wed 01/28/2026.
-
--   **Add your GitHub repo URL to this [Google Sheet](https://docs.google.com/spreadsheets/d/1fERw6kvSyAf30rY9ZHtFRIu01wM3qGa8cBQU-AGzh-g/edit?usp=sharing)** by 11:59pm on Wed 01/28/2026 (so that we can find your README)
-
--   **Submit a [Generative AI Statement of Use](https://forms.gle/uCw7U5jzJAKahjA4A)** for HW #2 by 11:59pm on Wed 01/28/2026.
+-   An aspect of the visualization analysis I wanted to explore but wasn’t sure how to implement was a visualization showing the percentage makeup of how susceptible each county is to natural disasters relative to other counties within the same state, as well as comparing that distribution across different states. For example, it would have been interesting to see how counties in Texas and California differ in their risk composition, highlighting which counties contribute most to the state’s overall vulnerability.
