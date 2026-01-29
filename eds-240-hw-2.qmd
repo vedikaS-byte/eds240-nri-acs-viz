@@ -58,81 +58,85 @@ fema <- read_csv(here("data", "National_Risk_Index_Counties_807384124455672111.c
 glimpse(fema)
 colSums(is.na(fema))
 
-fema <- fema %>% filter(!`State Name` %in% c("District of Columbia","American Samoa", "Guam"   ,"Northern Mariana Islands", "Puerto Rico", "Virgin Islands" ))
+fema <- fema %>% filter(!`State Name` %in% c("District of Columbia","American Samoa", "Guam", "Northern Mariana Islands", "Puerto Rico", "Virgin Islands" ))
 
 glimpse(fema)
 unique(fema$`State Name`) 
 
-fema_clean <- fema %>% select(state = "State Name Abbreviation", county = "County Name", nri = "National Risk Index - Score - Composite")
+fema_clean <- fema %>% select(state = "State Name Abbreviation", state_name = "State Name", county = "County Name", nri = "National Risk Index - Score - Composite")
 fema_clean
 ```
 
-```{r, fig.asp= 1.5}
-## I will use a violin plot with jittered points to illustrate the distribution of counties in separate states
+```{r, fig.asp= 1.6}
+# include a title (short, descriptive) & subtitle (describes main takeaway) (see Fundamentals of Data Visualization, Ch 22 for an example), a caption (describes the data source, e.g. “Data: FEMA National Risk Index (2025 Release)”), and alt text (following the formula you recently practiced in lab; use the fig-alt code chunk option to apply your alt text)
 
-# fema_clean %>%
-#   # mutate(state_class =
-#   #                       case_when(
-#   #                        state == "CA" ~ "California",
-#   #                        state != "CA" ~ "Other States"
-#   #                         )) %>%
-#   ggplot(aes(x = state, y = nri)) + geom_violin() + geom_jitter()
-# 
-
-## ranked dot plot
+# Create a ranked bar plot with the averaged composite NRI score per state
 fema_clean %>%
-  # mutate(state_class =
-  #                       case_when(
-  #                        state == "CA" ~ "California",
-  #                        state != "CA" ~ "Other States"
-  #                         )) %>%
-  group_by(state) %>%
-  summarize(mean_nri = mean(nri, na.rm = TRUE)) %>% 
-  mutate(state = reorder(state, mean_nri)) %>%
-  ggplot(aes(x = mean_nri, y = state)) +
-  geom_point(aes(color = state == "CA"), size = 3) +
-  scale_color_manual(
-    name = "", 
-    values = c("TRUE" = "#CA0020", # only label california
-               "FALSE" = "grey60"),
-    labels = c("Other States", "California")
-  ) +
+  group_by(state_name) %>%
+  
+  # Calculate the average county NRI score by state
+  summarize(mean_nri = mean(nri, na.rm = T)) %>% 
+  
+  # Create a new variable to group states 
+  mutate(
+    # Reorder states by mean NRI 
+    state = fct_reorder(state_name, mean_nri),
+    # Label California as its own category, then group all remaining states together 
+    state_group = if_else(state_name == "California", "California", "Other States")
+  ) %>%  
+ 
+  # Set the aesthetics for the ranked bar plot
+  ggplot(aes(x = mean_nri, y = state, fill = state_group)) + # Set aesthetics
+  
+  geom_col() +
+  
+  # Label each bar with its corresponding average NRI score
+  geom_text( 
+    aes( 
+      label = round(mean_nri, 2)), # Round each score to the nearest hundreth
+      hjust = -0.1, # Adjust the placement to scale
+      size = 2.5 # Set a size for each labels
+  ) +  
+  
+  # Rescale and adjust the positioning of labels on the x-axis
+  scale_x_continuous(
+    expand = expansion(mult = c(0, 0.05)), # Remove gap at 0 
+     breaks = seq(0, 100, by = 10)) +     # Break every 10% 
+  
+  # Assign colors to each state group (California vs Other States)
+    scale_fill_manual(
+    name = "", # Leave the legend title as an empty string
+    values = c(
+      "California" = "darkred", # Assign "California" a dark red color
+      "Other States" = "grey60" # Assign the grouped states besides California a grey color for contrast
+    )) + 
+      
+  # Update the labels of the plot    
   labs(
-    title = "Average County National Risk Index (Composite Score) by State",
-    x = "Average County National Risk Index (Composite Score)",
-    y = "State"
-  ) +
-  theme_minimal()
-
-
-
-# ridgeline
-fema_clean %>% 
-  ggplot(aes(
-    x = nri,
-    y = fct_reorder(state, nri),
-    fill = state
-  )) +
-  geom_density_ridges(alpha = 0.6, color = "white") +
-  guides(fill = "none") +
-  labs(
-    x = "County National Risk Index (Composite Score)",
-    y = "State",
-    title = "Distribution of County Level FEMA National Risk Index Scores",
-    subtitle = "Ridgeline represents county level distribution within a state"
-  ) +
-  theme_minimal()
-
-
-
-
+    title = "Average County National Risk Index (Composite Score) by State", # Add a title
+    subtitle = "Each value represents the mean county-level NRI score for a state, with \nCalifornia highlighted as the baseline for comparison.", # Add a subtitle with a line break
+    x = "Average Composite County National Risk Index (%)", # Add an x-label
+    y = "State", # Add a y-label
+    caption = "Data Source: 2025 Release of FEMA National Risk Index (NRI). Analysis contains only the 50 US States.") + # Add a caption
+ 
+  # Select a theme with no background grid    
+  theme_classic() + 
+      
+  # Adjust the legend and caption placement    
+  theme(legend.position = "bottom", # Move the legend position to bottom of plot
+        plot.caption.position = "plot", # Align the caption with plot
+        plot.caption = element_text(hjust = 0)) # Adjust the position horizontal to the plot
 ```
 
 ### **V. Answer some questions**
 
 -   **1.** What are your variables of interest and what kinds of data (e.g. numeric, categorical, ordered, etc.) are they (a bullet point list is fine)?
 
+    -   
+
 -   **2.** How did you decide which type of graphic form was best suited for answering the question? What alternative graphic forms could you have used instead? Why did you settle on this particular graphic form?
+
+    -   "Because FEMA’s NRI is a standardized composite index representing relative county-level risk, averaging county scores within states provides a reasonable summary of typical risk levels for state-to-state comparison."
 
 -   **3.** Summarize your main finding in no more than two sentences.
 
@@ -142,7 +146,7 @@ fema_clean %>%
 
 ## **Rubric (specifications)**
 
-To recieve a “Satisfactory” on HW #2:
+To receive a “Satisfactory” on HW #2:
 
 -   **Create one visualization** that answers the question, *“How do FEMA National Risk Index scores for counties in California compare to those in other states?”* and fulfills the requirements listed in Part IV.
 
