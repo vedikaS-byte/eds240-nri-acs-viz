@@ -1,9 +1,13 @@
 ---
 title: "HW #3: Visualizing FEMA NRI x ACS Data"
 author: "Vedika Shirtekar"
-date: "2/10/2026"
+date: "2/11/2026"
 format: pdf
 ---
+
+## Build visualization
+
+**Create a data viz that helps to answer the question, *How does climate hazard risk exposure vary across racial / ethnic groups in California?*** This will require some data wrangling first (including joining the NRI and ACS data).
 
 ```{r}
 #| warning: false
@@ -49,7 +53,8 @@ race_ethnicity %>%
 ```
 
 ```{r}
-## Based on previous table, filter for racial groups of interest based on the associated code
+## Based on previous table, filter for racial groups of interest based 
+## on the associated code
 race_ethnicity <- race_ethnicity %>%
   filter(variable %in% c(
     "B03002_012", ## Hispanic or Latino
@@ -111,7 +116,8 @@ ggplot(aes(
   x = weighted_nri,
   y = reorder(race, weighted_nri) ## Reorder by descending weighed score
 )) +
-  geom_segment(
+  ## Establish segment distance based on nri range 
+  geom_segment( 
     aes(x = min(weighted_nri), xend = weighted_nri,
         y = race, yend = race),
     color = "darkgrey",
@@ -142,38 +148,36 @@ ggplot(aes(
   theme_minimal()
 ```
 
-## Build visualization
-
-**Create a data viz that helps to answer the question, *How does climate hazard risk exposure vary across racial / ethnic groups in California?*** This will require some data wrangling first (including joining the NRI and ACS data).
-
-Your final visualization should:
-
--   include the following racial / ethnic groups: White, Black or African American, American Indian and Alaska Native, Asian, Native Hawaiian and Other Pacific Islander, Some Other Race, Two or More Races, Hispanic or Latino
-
--   include a title (short, descriptive) & subtitle (describes main takeaway) (see [Fundamentals of Data Visualization, Ch 22](https://clauswilke.com/dataviz/figure-titles-captions.html) for an example), a caption (describes the data source, e.g. “Data: FEMA National Risk Index (2023 Release)”), and alt text (following the formula you recently practiced in [lab](https://eds-240-data-viz.github.io/course-materials/lab/LAB-SLIDES-alt-text.html#alt-text-formula); use the `fig-alt` code chunk option to apply your alt text)
-
--   consider and implement strategies for highlighting trends / important information (e.g. arranging data, highlighting data, adjusting scales)
-
--   use custom colors (if applicable), rather than ggplot defaults
-
--   have an updated theme / polished theme
-
-### **Answer some questions**
+## Answer questions
 
 -   **1.** What are your variables of interest and what kinds of data (e.g. numeric, categorical, ordered, etc.) are they (a bullet point list is fine)?
 
-    -   variable, label, concept
+    -   `State-County FIPS Code` (categorical)
 
-    -   GEOID, NAME, race, estimate
+    -   `National Risk Index - Score - Composite` (numeric)
+
+    -   `variable` (categorical)
+
+    -   `label` (categorical)
+
+    -   `GEOID` (treated as categorical)
+
+    -   `NAME` (categorical)
+
+    -   `estimate` (numeric)
 
 -   **2.** How did you decide which type of graphic form was best suited for answering the question? What alternative graphic forms could you have used instead? Why did you settle on this particular graphic form?
 
-    -   variable, label, concept
-
-    -   
+    I decided to create a lollipop chart to address the research question because the focus centered on comparing the average climate hazard risk exposure (composite NRI score) across racial and ethnic groups rather than examining distributions or spatial patterns among these groups. The lollipop chart is appropriate for this purpose because it clearly emphasizes the relative differences and ordering across categories while being visually simple and easy to interpret. By displaying the population-weighted average NRI scores, the lollipop chart allows to quickly identify which groups experience higher or lower average exposure. While a bar graph would have conveyed the information similarly, it would place an emphasis on area. A distribution based plot, such as a boxplot, would display the spread of county-level risk scores within each group but would not explicitly communicate differences in the average exposure across groups. As a result, I opted to address the question with a lollipop chart as this kind of chart provides a direct and interpretable representation for understanding how the NRI score varies across each group when represented as a single quantity.
 
 -   **3.** Summarize your main finding in no more than two sentences.
 
+In California, Asian (99.33) and African American (99.32) populations experience the highest average climate hazard risk exposure, based on population-weighted NRI scores that account for differences in county population size and reflect where people in each group actually live. In contrast, White populations experience the lowest average climate hazard risk exposure (98.65).
+
 -   **4.** What modifications did you make to this visualization to make it more easily readable?
 
+To improve legibility, I applied a minimal theme (`theme_minimal()`) to reduce visual complexity, added direct value labels using `geom_text()` such that each population-weighted NRI score can be read without relying solely on the axis, and ordered racial and ethnic groups in descending order to ensure comparisons and ranking across groups are easier to interpret.
+
 -   **5.** Is there anything you wanted to implement, but didn’t know how? If so, please describe.
+
+One feature I considered implementing was visually representing uncertainty in climate risk exposure for each racial and ethnic group, such as overlaying distributions of county-level NRI scores. However, because the analysis relies on county-level National Risk Index (NRI) scores and incorporates population to account for differences in county population size, I was not sure how to incorporate uncertainty in an appropriate way without overstating precision.
