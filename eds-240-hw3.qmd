@@ -5,10 +5,11 @@ date: "2/10/2026"
 format: pdf
 ---
 
-  
-
-
 ```{r}
+#| warning: false
+#| message: false
+library(tidyverse)
+library(here)
 #....Step 1a: see all available ACS variables + descriptions.....
 # acs_vars <- tidycensus::load_variables(year = 2023,
 #                                        dataset = "acs1")
@@ -32,7 +33,147 @@ format: pdf
 
 #..................Step 3: read in your CSV file.................
 race_ethnicity <- readr::read_csv(here::here("data", "ACS-1yr-2023-county-race-ethnicity.csv"))
+nri <- read_csv(here("data", "National_Risk_Index_Counties_807384124455672111.csv"))
+
 ```
 
+```{r}
+## Filter for county score in California
+nri_ca <- nri %>% filter(`State Name Abbreviation`  == "CA")
 
+## Create table to understand which code is associated with each race
+race_ethnicity %>%
+  select(variable, label, concept) %>% ## Select variable (group code), label (racial group), and concept (general description)
+  distinct() %>% ## Ignore duplicates of the same group code and label
+  arrange(label, concept) ## Arrange in alphebetical order
+```
 
+```{r}
+## Based on previous table, filter for racial groups of interest based on the associated code
+race_ethnicity <- race_ethnicity %>%
+  filter(variable %in% c(
+    "B03002_012", ## Hispanic or Latino
+    "B02001_002", ## White 
+    "B02001_003", ## African American
+    "B02001_004", ## American Indian and Alaska Native
+    "B02001_005", ## Asian
+    "B02001_006", ## Native Hawaiian and Other Pacific Islander
+    "B02001_007", ## Some other race
+    "B02001_008" ## Two or more races
+  )) %>%
+  
+  ## Create a new variable to store racial groups as levels
+  mutate(
+    race = case_when(
+    variable == "B03002_012" ~ "Hispanic or Latino",
+    variable == "B02001_002" ~ "White", 
+    variable == "B02001_003" ~ "African American",
+    variable == "B02001_004" ~ "American Indian and Alaska Native",
+    variable == "B02001_005" ~ "Asian",
+    variable == "B02001_006" ~ "Native Hawaiian and Other Pacific Islander",
+    variable == "B02001_007" ~"Some other race",
+    variable == "B02001_008" ~  "Two or more races"
+    )
+  ) %>%
+  
+  ## Select for GEOID as well to perform left join with nri_ca
+  select(GEOID, NAME, race, estimate)
+```
+
+```{r}
+## Select and rename state-county code and composite NRI score
+nri_ca <- nri_ca %>%
+  select(
+    fips = `State-County FIPS Code`,
+    nri_score = `National Risk Index - Score - Composite`
+  )
+
+## Perform merge on GEOID
+race_nri <- race_ethnicity %>% 
+  left_join(
+    nri_ca, 
+    by = c("GEOID" = "fips")
+  )
+```
+
+```{r, fig.height= 9, fig.width=11}
+## Use a weighted score based on population estimate per county to 
+## obtain a representative NRI score that accounts for "misbalance" between 
+## more populous and less populous counties 
+race_nri %>%
+  group_by(race) %>%
+  summarize(
+    weighted_nri = weighted.mean(nri_score, estimate, na.rm = TRUE)
+  ) %>%
+  
+## Use a lollipop plot to showcase the weighted score per racial group 
+ggplot(aes(
+  x = weighted_nri,
+  y = reorder(race, weighted_nri) ## Reorder by descending weighed score
+)) +
+  geom_segment(
+    aes(x = min(weighted_nri), xend = weighted_nri,
+        y = race, yend = race),
+    color = "darkgrey",
+    linewidth = 1
+  ) +
+  geom_point(
+    size = 3,
+    color = "darkblue", 
+    alpha = .5
+  ) +
+  scale_x_continuous(
+    limits = c(98.6, 99.5), ## Based on min and max weighted score
+    breaks = seq(98.6, 99.5, by = 0.15) ## Split into six equal groups based on difference (.9)
+)+ 
+  geom_text(
+    aes(label = round(weighted_nri, 2)),
+    hjust = -0.6, ## Too positive is too far left for horizontal text placement
+    size = 4
+  ) +
+  labs(
+    title = "Climate Hazard Risk Exposure by Race and Ethnicity in California",
+    subtitle = "Population-weighted average NRI score (scaled to weighted NRI score range)",
+    x = "Average Climate Hazard Risk (NRI)",
+    y = "Race/Ethnicity", 
+    caption = "Data Source: 2025 Release of FEMA National Risk Index (NRI). \nData Source: 2025 Release of the American Community Survey (ACS)", 
+    alt = "Lollipop chart showing composite National Risk Index (NRI) scores for racial and ethnic groups in California, weighted by estimated population. Groups are arranged vertically (y-axis) in descending order of weighted NRI, with each group labeled by its weighted NRI value along the x-axis."
+  ) +
+  theme_minimal()
+```
+
+## Build visualization
+
+**Create a data viz that helps to answer the question, *How does climate hazard risk exposure vary across racial / ethnic groups in California?*** This will require some data wrangling first (including joining the NRI and ACS data).
+
+Your final visualization should:
+
+-   include the following racial / ethnic groups: White, Black or African American, American Indian and Alaska Native, Asian, Native Hawaiian and Other Pacific Islander, Some Other Race, Two or More Races, Hispanic or Latino
+
+-   include a title (short, descriptive) & subtitle (describes main takeaway) (see [Fundamentals of Data Visualization, Ch 22](https://clauswilke.com/dataviz/figure-titles-captions.html) for an example), a caption (describes the data source, e.g. “Data: FEMA National Risk Index (2023 Release)”), and alt text (following the formula you recently practiced in [lab](https://eds-240-data-viz.github.io/course-materials/lab/LAB-SLIDES-alt-text.html#alt-text-formula); use the `fig-alt` code chunk option to apply your alt text)
+
+-   consider and implement strategies for highlighting trends / important information (e.g. arranging data, highlighting data, adjusting scales)
+
+-   use custom colors (if applicable), rather than ggplot defaults
+
+-   have an updated theme / polished theme
+
+### **Answer some questions**
+
+-   **1.** What are your variables of interest and what kinds of data (e.g. numeric, categorical, ordered, etc.) are they (a bullet point list is fine)?
+
+    -   variable, label, concept
+
+    -   GEOID, NAME, race, estimate
+
+-   **2.** How did you decide which type of graphic form was best suited for answering the question? What alternative graphic forms could you have used instead? Why did you settle on this particular graphic form?
+
+    -   variable, label, concept
+
+    -   
+
+-   **3.** Summarize your main finding in no more than two sentences.
+
+-   **4.** What modifications did you make to this visualization to make it more easily readable?
+
+-   **5.** Is there anything you wanted to implement, but didn’t know how? If so, please describe.
