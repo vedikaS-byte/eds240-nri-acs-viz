@@ -3,6 +3,8 @@ title: "HW #3: Visualizing FEMA NRI x ACS Data"
 author: "Vedika Shirtekar"
 date: "2/11/2026"
 format: pdf
+editor_options: 
+  chunk_output_type: inline
 ---
 
 ## Build visualization
@@ -101,7 +103,7 @@ race_nri <- race_ethnicity %>%
   )
 ```
 
-```{r, fig.height= 9, fig.width=11}
+```{r, fig.height= 6, fig.width=10}
 ## Use a weighted score based on population estimate per county to 
 ## obtain a representative NRI score that accounts for "misbalance" between 
 ## more populous and less populous counties 
@@ -111,27 +113,21 @@ race_nri %>%
     weighted_nri = weighted.mean(nri_score, estimate, na.rm = TRUE)
   ) %>%
   
-## Use a lollipop plot to showcase the weighted score per racial group 
+## Use a ranked horizontal dot plot to showcase the weighted score per racial group 
 ggplot(aes(
   x = weighted_nri,
   y = reorder(race, weighted_nri) ## Reorder by descending weighed score
 )) +
-  ## Establish segment distance based on nri range 
-  geom_segment( 
-    aes(x = min(weighted_nri), xend = weighted_nri,
-        y = race, yend = race),
-    color = "darkgrey",
-    linewidth = 1
-  ) +
   geom_point(
     size = 3,
     color = "darkblue", 
     alpha = .5
   ) +
   scale_x_continuous(
-    limits = c(98.6, 99.5), ## Based on min and max weighted score
-    breaks = seq(98.6, 99.5, by = 0.15) ## Split into six equal groups based on difference (.9)
-)+ 
+    limits = c(90, 100), ## Based on min and max weighted score
+    breaks = seq(from = 90, to = 100, by = 1), ## Start from 90 to allow for at least 10 units of space
+    expand = expansion(mult = c(0, 0.1))
+    )+ 
   geom_text(
     aes(label = round(weighted_nri, 2)),
     hjust = -0.6, ## Too positive is too far left for horizontal text placement
@@ -139,13 +135,14 @@ ggplot(aes(
   ) +
   labs(
     title = "Climate Hazard Risk Exposure by Race and Ethnicity in California",
-    subtitle = "Population-weighted average NRI score (scaled to weighted NRI score range)",
+    subtitle = "Based on population-weighted average NRI scores, Asians and African Americans face the highest climate \ndisaster exposure in California, while White Americans face the lowest.",
     x = "Average Climate Hazard Risk (NRI)",
     y = "Race/Ethnicity", 
-    caption = "Data Source: 2025 Release of FEMA National Risk Index (NRI). \nData Source: 2025 Release of the American Community Survey (ACS)", 
-    alt = "Lollipop chart showing composite National Risk Index (NRI) scores for racial and ethnic groups in California, weighted by estimated population. Groups are arranged vertically (y-axis) in descending order of weighted NRI, with each group labeled by its weighted NRI value along the x-axis."
+    caption = "Data Source: 2025 Release of FEMA National Risk Index (NRI). \nData Source: 2023 Release of the American Community Survey (ACS).", 
+    alt = "Ranked horizontal dot plot showing composite National Risk Index (NRI) scores for racial and ethnic groups in California, weighted by estimated population. Groups are arranged vertically (y-axis) in descending order of weighted NRI, with each group labeled by its weighted NRI value along the x-axis."
   ) +
   theme_minimal()
+
 ```
 
 ## Answer questions
@@ -168,7 +165,7 @@ ggplot(aes(
 
 -   **2.** How did you decide which type of graphic form was best suited for answering the question? What alternative graphic forms could you have used instead? Why did you settle on this particular graphic form?
 
-    I decided to create a lollipop chart to address the research question because the focus centered on comparing the average climate hazard risk exposure (composite NRI score) across racial and ethnic groups rather than examining distributions or spatial patterns among these groups. The lollipop chart is appropriate for this purpose because it clearly emphasizes the relative differences and ordering across categories while being visually simple and easy to interpret. By displaying the population-weighted average NRI scores, the lollipop chart allows to quickly identify which groups experience higher or lower average exposure. While a bar graph would have conveyed the information similarly, it would place an emphasis on area. A distribution based plot, such as a boxplot, would display the spread of county-level risk scores within each group but would not explicitly communicate differences in the average exposure across groups. As a result, I opted to address the question with a lollipop chart as this kind of chart provides a direct and interpretable representation for understanding how the NRI score varies across each group when represented as a single quantity.
+    I decided to create a ranked horizontal dot plot to address the research question because the focus centered on comparing the average climate hazard risk exposure (composite NRI score) across racial and ethnic groups rather than examining distributions or spatial patterns among these groups. The dot plot is appropriate for this purpose because it clearly emphasizes the relative differences and ordering across categories while being visually simple and easy to interpret. By displaying the population-weighted average NRI scores, the dot plot chart allows to quickly identify which groups experience higher or lower average exposure. While a bar graph would have conveyed the information similarly, it would place an emphasis on area. A distribution based plot, such as a boxplot, would display the spread of county-level risk scores within each group but would not explicitly communicate differences in the average exposure across groups. As a result, I opted to address the question with a horizontal dot plot as this kind of chart provides a direct and interpretable representation for understanding how the NRI score varies across each group when represented as a single quantity.
 
 -   **3.** Summarize your main finding in no more than two sentences.
 
