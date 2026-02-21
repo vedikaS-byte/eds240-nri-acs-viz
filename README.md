@@ -44,7 +44,7 @@ This repository is organized as follows and contains:
 
 The data used in this project is obtained from FEMA’s [National Risk Index (NRI)](https://www.fema.gov/flood-maps/products-tools/national-risk-index) for natural hazards. The NRI provides open-access information on expected annual loss, social vulnerability, and community resilience for U.S. counties. It includes both hazard specific and composite risk scores, along with qualitative risk ratings ranging from “Very Low” to “Very High.” The dataset is publicly available through FEMA’s [Resilience Analysis and Planning Tool (RAPT)](https://hazards.fema.gov/nri/).
 
-The
+Demographic data used in the second analysis are obtained from the 2023 release of the U.S Census Bureau's [American Community Survey (ACS)](https://www.census.gov/programs-surveys/acs/about.html). The ACS data is accessed programmatically using the `tidycensus` package via the Census Bureau's API and include county-level population estimates by race and ethnicity.
 
 ## Contributors
 
@@ -52,6 +52,8 @@ This repository is maintained by Vedika Shirtekar as part of the Master of Envir
 
 ## References
 
-[1] EDS 240. (n.d.). *Data Visualization & Communication*. Bren School of Environmental Science and Management. Accessed January 27, 2026, from <https://eds-240-data-viz.github.io/>
+[1] American Community Survey (ACS). (2023). U.S. Census Bureau. Accessed February 19, 2026, from <https://www.census.gov/programs-surveys/acs/about.html>
 
-[2] Resilience Analysis and Planning Tool (RAPT). (2025). Federal Emergency Management Agency. Accessed January 27, 2026, from <https://www.fema.gov/emergency-managers/practitioners/resilience-analysis-and-planning-tool>
+[2] EDS 240. (n.d.). *Data Visualization & Communication*. Bren School of Environmental Science and Management. Accessed January 27, 2026, from <https://eds-240-data-viz.github.io/>
+
+[3] Resilience Analysis and Planning Tool (RAPT). (2025). Federal Emergency Management Agency. Accessed January 27, 2026, from <https://www.fema.gov/emergency-managers/practitioners/resilience-analysis-and-planning-tool>
