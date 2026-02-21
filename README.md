@@ -1,4 +1,4 @@
-# Homework #2 (Visualizing FEMA NRI Data)
+# Homework #2 & #3 (Visualizing FEMA NRI and ACS Data)
 
 \*The full assignment description is available on the [course website](https://eds-240-data-viz.github.io/course-materials/assignments/HW2.html).
 
