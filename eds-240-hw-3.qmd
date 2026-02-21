@@ -125,7 +125,7 @@ ggplot(aes(
   ) +
   scale_x_continuous(
     limits = c(90, 100), ## Based on min and max weighted score
-    breaks = seq(from = 90, to = 100, by = 1), ## Start from 90 to allow for at least 10 units of space
+    breaks = seq(from = 90, to = 100, by = 2), ## Allow at least 10 units of space
     expand = expansion(mult = c(0, 0.1))
     )+ 
   geom_text(
