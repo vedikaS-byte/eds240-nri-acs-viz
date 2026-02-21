@@ -32,8 +32,8 @@ This repository is organized as follows and contains:
 ├── eds240-nri-acs-viz.Rproj
 ├── eds-240-hw-2.pdf
 ├── eds-240-hw-2.qmd
-├── eds-240-hw3.pdf
-├── eds-240-hw3.qmd
+├── eds-240-hw-3.pdf
+├── eds-240-hw-3.qmd
 ├── README.md
 └── .gitignore
 ```
